@@ -16,4 +16,7 @@ var (
 	ErrTransactionFailed  = errors.New("erro ao executar transação no banco de dados")
 	ErrRecordNotFound     = errors.New("registro não encontrado no banco de dados")
 	ErrDatabaseConnection = errors.New("erro na conexão com o banco de dados")
+
+	// Category Errors
+	ErrCategoryNotFound = errors.New("categoria não encontrada")
 )

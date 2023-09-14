@@ -89,7 +89,7 @@ func (r *MockCategoryRepository) DeleteCategory(ctx context.Context, id int) err
 		}
 	}
 
-	return utils.ErrCategoryNotFound
+	return utils.ErrDeleteFailed
 }
 
 func TestCategoryUsecase_CreateCategory(t *testing.T) {
@@ -206,8 +206,8 @@ func TestCategoryUsecase_UpdateCategory(t *testing.T) {
 	}
 
 	_, err = categoryUsecase.UpdateCategory(ctx, nonExistentCategory)
-	assert.Error(t, err)                            // Verifique se ocorreu um erro.
-	assert.Equal(t, utils.ErrCategoryNotFound, err) // Verifique se o erro é de categoria não encontrada.
+	assert.Error(t, err)                        // Verifique se ocorreu um erro.
+	assert.Equal(t, utils.ErrUpdateFailed, err) // Verifique se o erro é de categoria não encontrada.
 
 	// Caso de teste 3: Nome de categoria vazio.
 	emptyCategory := &category.Category{
@@ -218,4 +218,43 @@ func TestCategoryUsecase_UpdateCategory(t *testing.T) {
 	_, err = categoryUsecase.UpdateCategory(ctx, emptyCategory)
 	assert.Error(t, err)                               // Verifique se ocorreu um erro.
 	assert.Equal(t, utils.ErrInvalidCategoryName, err) // Verifique se o erro é de nome de categoria inválido.
+}
+
+func TestCategoryUsecase_DeleteCategory(t *testing.T) {
+	// Crie um contexto de teste.
+	ctx := context.Background()
+
+	// Crie um repositório mock.
+	mockRepo := NewMockCategoryRepository()
+
+	// Crie um caso de uso de categoria com o repositório mock.
+	categoryUsecase := usecase.NewCategoryUsecase(mockRepo)
+
+	// Caso de teste 1: Exclusão bem-sucedida.
+	existingCategoryID := 1
+	err := categoryUsecase.DeleteCategory(ctx, existingCategoryID)
+	assert.NoError(t, err) // Verifique se não há erro.
+
+	// Verifique se a categoria foi excluída com sucesso, buscando-a por ID.
+	deletedCategory, err := categoryUsecase.GetCategoryByID(ctx, existingCategoryID)
+	assert.Equal(t, utils.ErrCategoryNotFound, err) // Verifique se a categoria não foi encontrada após a exclusão.
+	assert.Nil(t, deletedCategory)
+
+	// Caso de teste 2: Tentativa de exclusão de uma categoria inexistente.
+	nonExistentCategoryID := 10 // ID que não existe no repositório mock.
+	err = categoryUsecase.DeleteCategory(ctx, nonExistentCategoryID)
+	assert.Equal(t, utils.ErrDeleteFailed, err) // Verifique se ocorreu um erro.
+
+	// Verifique se a categoria não foi excluída, buscando-a por ID.
+	_, err = categoryUsecase.GetCategoryByID(ctx, nonExistentCategoryID)
+	assert.Equal(t, utils.ErrCategoryNotFound, err) // Verifique se a categoria não foi encontrada.
+
+	// Caso de teste 3: Tentativa de exclusão de uma categoria com ID inválido.
+	invalidCategoryID := 0 // ID inválido.
+	err = categoryUsecase.DeleteCategory(ctx, invalidCategoryID)
+	assert.Equal(t, utils.ErrDeleteFailed, err) // Verifique se ocorreu um erro.
+
+	// Verifique se a categoria não foi excluída, buscando-a por ID.
+	_, err = categoryUsecase.GetCategoryByID(ctx, invalidCategoryID)
+	assert.Equal(t, utils.ErrCategoryNotFound, err) // Verifique se a categoria não foi encontrada.
 }

@@ -72,6 +72,11 @@ func (uc *CategoryUsecase) GetCategoryByName(ctx context.Context, name string) (
 
 // AtualizarCategory atualiza uma categoria existente com base nos dados fornecidos.
 func (uc *CategoryUsecase) UpdateCategory(ctx context.Context, category *category.Category) (*category.Category, error) {
+
+	if category.Name == "" {
+		return nil, utils.ErrInvalidCategoryName
+	}
+
 	// Chame a função do repositório para atualizar a categoria no banco de dados.
 	category, err := uc.repository.UpdateCategory(ctx, category)
 	if err != nil {
@@ -88,8 +93,6 @@ func (uc *CategoryUsecase) DeleteCategory(ctx context.Context, id int) error {
 	if err != nil {
 		return utils.ErrDeleteFailed
 	}
-
-	// Verifique se a exclusão foi bem-sucedida ou retorne um erro, se necessário.
 
 	return nil
 }

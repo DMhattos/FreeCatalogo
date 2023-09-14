@@ -18,5 +18,6 @@ var (
 	ErrDatabaseConnection = errors.New("erro na conexão com o banco de dados")
 
 	// Category Errors
-	ErrCategoryNotFound = errors.New("categoria não encontrada")
+	ErrCategoryNotFound    = errors.New("categoria não encontrada")
+	ErrInvalidCategoryName = errors.New("nome da categoria invalido")
 )

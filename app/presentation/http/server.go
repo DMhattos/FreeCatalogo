@@ -28,7 +28,7 @@ func StartServer(port int) {
 	if err != nil {
 		log.Fatal("Erro ao abrir a conexão com o banco de dados:", err)
 	}
-
+	defer db.Close()
 	// Crie instâncias dos repositórios usando a conexão com o banco de dados.
 	repositories := database.NewRepositories(db)
 

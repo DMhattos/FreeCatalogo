@@ -60,6 +60,27 @@ func (h *CategoryHandler) GetCategoryByIDHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, foundCategory)
 }
 
+// GetCategoryByNameHandler lida com solicitações GET para obter uma categoria por name.
+func (h *CategoryHandler) GetCategoryByNameHandler(c *gin.Context) {
+	name := c.Param("name")
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Nome da categoria inválido"})
+		return
+	}
+
+	foundCategory, err := h.usecase.GetCategoryByName(c.Request.Context(), name)
+	if err != nil {
+		if err == utils.ErrCategoryNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Categoria não encontrada"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar a categoria"})
+		return
+	}
+
+	c.JSON(http.StatusOK, foundCategory)
+}
+
 // UpdateCategoryHandler lida com solicitações PUT para atualizar uma categoria.
 func (h *CategoryHandler) UpdateCategoryHandler(c *gin.Context) {
 	var category category.Category

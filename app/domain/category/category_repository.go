@@ -13,7 +13,7 @@ type CategoryRepository interface {
 	// GetCategoryByName recupera uma categoria pelo seu name e retorna a categoria ou um erro se a categoria não for encontrada.
 	GetCategoryByName(ctx context.Context, name string) (*Category, error)
 	// UpdateCategory atualiza uma categoria existente e retorna a categoria atualizada ou um erro.
-	UpdateCategory(ctx context.Context, category *Category) (*Category, error)
+	UpdateCategory(ctx context.Context, category *Category) error
 	// DeleteCategory exclui uma categoria pelo seu ID e retorna um erro se a exclusão falhar.
 	DeleteCategory(ctx context.Context, id int) error
 }

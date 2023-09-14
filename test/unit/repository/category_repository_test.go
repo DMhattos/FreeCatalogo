@@ -31,7 +31,7 @@ func TestCategoryRepository_InsertCategory(t *testing.T) {
 	mock.ExpectExec("INSERT INTO categories").WithArgs(category.Name).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	// Execute a função de inserção.
-	err = repo.InsertCategory(ctx, category)
+	_, err = repo.CreateCategory(ctx, category)
 
 	// Verifique se não houve erros.
 	assert.NoError(t, err)

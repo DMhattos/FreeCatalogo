@@ -16,29 +16,80 @@ func NewCategoryRepository(db *sql.DB) *CategoryRepository {
 	return &CategoryRepository{db}
 }
 
-// InsertCategory insere uma nova categoria no banco de dados.
-func (repo *CategoryRepository) InsertCategory(ctx context.Context, category *model.Category) error {
+// CreateCategory insere uma nova categoria no banco de dados.
+func (repo *CategoryRepository) CreateCategory(ctx context.Context, category *model.Category) (
+	*model.Category, error) {
 	// Verifique se o contexto foi cancelado ou expirou.
 	select {
 	case <-ctx.Done():
 		// O contexto foi cancelado ou expirou.
-		return ctx.Err()
+		return nil, ctx.Err()
 	default:
 		// O contexto está ativo, continue com a inserção.
 	}
 
 	// Crie uma consulta SQL para inserir a categoria no banco de dados.
-	query := "INSERT INTO categories (name) VALUES ($1)"
+	query := "INSERT INTO categories (name) VALUES ($1) RETURNING id"
 
-	// Execute a consulta usando o banco de dados com o contexto fornecido.
-	_, err := repo.db.ExecContext(ctx, query, category.Name)
+	var insertedCategoryID int
+	// Execute a consulta usando o banco de dados com o contexto fornecido e obtenha o ID da categoria inserida.
+	err := repo.db.QueryRowContext(ctx, query, category.Name).Scan(&insertedCategoryID)
 
 	if err != nil {
 		// Trate erros de inserção, se houver algum.
-		return err
+		return nil, err
 	}
 
-	return nil
+	// A inserção foi bem-sucedida, então atualize a categoria com o ID gerado.
+	category.ID = insertedCategoryID
+
+	// Retorne a categoria recém-inserida.
+	return category, nil
+}
+
+func (repo *CategoryRepository) ListCategories(ctx context.Context) ([]*model.Category, error) {
+	// Verifique se o contexto foi cancelado ou expirou.
+	select {
+	case <-ctx.Done():
+		// O contexto foi cancelado ou expirou.
+		return nil, ctx.Err()
+	default:
+		// O contexto está ativo, continue com a listagem.
+	}
+
+	// Crie uma consulta SQL para listar todas as categorias.
+	query := "SELECT id, name FROM categories"
+
+	// Execute a consulta usando o banco de dados com o contexto fornecido.
+	rows, err := repo.db.QueryContext(ctx, query)
+	if err != nil {
+		// Trate erros de consulta, se houver algum.
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Crie uma lista para armazenar as categorias.
+	var categories []*model.Category
+
+	// Percorra as linhas do resultado da consulta.
+	for rows.Next() {
+		var category model.Category
+		// Escaneie os valores da linha para a estrutura Category.
+		if err := rows.Scan(&category.ID, &category.Name); err != nil {
+			// Trate erros de escaneamento.
+			return nil, err
+		}
+		// Adicione a categoria à lista.
+		categories = append(categories, &category)
+	}
+
+	if err := rows.Err(); err != nil {
+		// Trate erros de percorrer as linhas.
+		return nil, err
+	}
+
+	// Retorne a lista de categorias.
+	return categories, nil
 }
 
 // GetCategoryByID obtém uma categoria pelo seu ID no banco de dados.

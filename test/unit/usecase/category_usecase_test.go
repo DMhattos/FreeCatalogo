@@ -67,16 +67,16 @@ func (r *MockCategoryRepository) GetCategoryByName(ctx context.Context, name str
 	return nil, utils.ErrCategoryNotFound
 }
 
-func (r *MockCategoryRepository) UpdateCategory(ctx context.Context, category *model.Category) (*model.Category, error) {
+func (r *MockCategoryRepository) UpdateCategory(ctx context.Context, category *model.Category) error {
 	for i, existingCategory := range r.Categories {
 		if existingCategory.ID == category.ID {
 			// Atualize o nome da categoria.
 			r.Categories[i].Name = category.Name
-			return category, nil
+			return nil
 		}
 	}
 
-	return nil, utils.ErrCategoryNotFound
+	return utils.ErrCategoryNotFound
 }
 
 func (r *MockCategoryRepository) DeleteCategory(ctx context.Context, id int) error {

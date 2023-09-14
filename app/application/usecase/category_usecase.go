@@ -78,7 +78,7 @@ func (uc *CategoryUsecase) UpdateCategory(ctx context.Context, category *categor
 	}
 
 	// Chame a função do repositório para atualizar a categoria no banco de dados.
-	category, err := uc.repository.UpdateCategory(ctx, category)
+	err := uc.repository.UpdateCategory(ctx, category)
 	if err != nil {
 		return nil, utils.ErrUpdateFailed
 	}

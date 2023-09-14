@@ -4,14 +4,10 @@
 **Em desenvolvimento**.
 
 
-Categorias
-As rotas abaixo permitem que você realize operações CRUD (Create, Read, Update, Delete) em categorias.
 
-Claro! Aqui está a documentação formatada em Markdown:
+# Documentação da API FreeCatalogo
 
-# Documentação da API de Categorias
-
-Esta é a documentação da API de Categorias do nosso aplicativo. As rotas abaixo permitem que você realize operações CRUD (Create, Read, Update, Delete) em categorias.
+Esta é a documentação da API de FreeCatalogo. As rotas abaixo permitem que você realize operações CRUD (Create, Read, Update, Delete) em categorias.
 
 ## Rotas
 

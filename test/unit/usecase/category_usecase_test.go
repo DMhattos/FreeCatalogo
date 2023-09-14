@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/DMhattos/FreeCatalogo/app/application/usecase"
-	"github.com/DMhattos/FreeCatalogo/app/domain/category"
 	model "github.com/DMhattos/FreeCatalogo/app/domain/category"
 	"github.com/DMhattos/FreeCatalogo/app/utils"
 	"github.com/stretchr/testify/assert"
@@ -103,13 +102,13 @@ func TestCategoryUsecase_CreateCategory(t *testing.T) {
 	categoryUsecase := usecase.NewCategoryUsecase(mockRepo)
 
 	// Caso de teste 1: Categoria com nome válido.
-	validCategory := &category.Category{Name: "Nova Categoria"}
+	validCategory := &model.Category{Name: "Nova Categoria"}
 	createdCategory, err := categoryUsecase.CreateCategory(ctx, validCategory)
 	assert.NoError(t, err)            // Verifique se não há erro.
 	assert.NotNil(t, createdCategory) // Verifique se a categoria foi criada.
 
 	// Caso de teste 2: Categoria com nome inválido.
-	invalidCategory := &category.Category{Name: ""}
+	invalidCategory := &model.Category{Name: ""}
 	_, err = categoryUsecase.CreateCategory(ctx, invalidCategory)
 	assert.Error(t, err) // Verifique se ocorreu um erro de nome de categoria inválido.
 }
@@ -182,14 +181,14 @@ func TestCategoryUsecase_UpdateCategory(t *testing.T) {
 	categoryUsecase := usecase.NewCategoryUsecase(mockRepo)
 
 	// Crie uma categoria existente para atualização.
-	existingCategory := &category.Category{
+	existingCategory := &model.Category{
 		ID:   1,
 		Name: "Livro",
 	}
 
 	// Caso de teste 1: Atualização bem-sucedida.
 	updatedCategoryName := "Novo Livro"
-	updatedCategory := &category.Category{
+	updatedCategory := &model.Category{
 		ID:   existingCategory.ID,
 		Name: updatedCategoryName,
 	}
@@ -200,7 +199,7 @@ func TestCategoryUsecase_UpdateCategory(t *testing.T) {
 	assert.Equal(t, updatedCategoryName, updatedCategory.Name) // Verifique se o nome da categoria foi atualizado corretamente.
 
 	// Caso de teste 2: ID de categoria inexistente.
-	nonExistentCategory := &category.Category{
+	nonExistentCategory := &model.Category{
 		ID:   10, // ID que não existe no repositório mock.
 		Name: "Categoria Inexistente",
 	}
@@ -210,7 +209,7 @@ func TestCategoryUsecase_UpdateCategory(t *testing.T) {
 	assert.Equal(t, utils.ErrUpdateFailed, err) // Verifique se o erro é de categoria não encontrada.
 
 	// Caso de teste 3: Nome de categoria vazio.
-	emptyCategory := &category.Category{
+	emptyCategory := &model.Category{
 		ID:   existingCategory.ID,
 		Name: "",
 	}

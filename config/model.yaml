@@ -1,0 +1,8 @@
+//Modelo para arquivo de configuração
+database:
+  host: localhost
+  port: 3306
+  dbName: db_name
+  user: db_user
+  password: db_password
+  //outros campos

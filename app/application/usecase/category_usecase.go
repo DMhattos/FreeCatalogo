@@ -49,6 +49,27 @@ func (uc *CategoryUsecase) GetCategoryByID(ctx context.Context, id int) (*catego
 	return foundCategory, nil
 }
 
+// GetCategoryByName obtém uma categoria pelo seu name.
+func (uc *CategoryUsecase) GetCategoryByName(ctx context.Context, name string) (*category.Category, error) {
+	// Verifique se o nome da categoria é válido (não vazio).
+	if name == "" {
+		return nil, utils.ErrInvalidCategoryName
+	}
+
+	// Chame a função do repositório para buscar a categoria por name no banco de dados.
+	foundCategory, err := uc.repository.GetCategoryByName(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+
+	// Verifique se a categoria foi encontrada. Se não, retorne um erro personalizado.
+	if foundCategory == nil {
+		return nil, utils.ErrCategoryNotFound
+	}
+
+	return foundCategory, nil
+}
+
 // AtualizarCategory atualiza uma categoria existente com base nos dados fornecidos.
 func (uc *CategoryUsecase) UpdateCategory(ctx context.Context, category *category.Category) (*category.Category, error) {
 	// Chame a função do repositório para atualizar a categoria no banco de dados.

@@ -1,8 +1,11 @@
--- Tabela para armazenar informações sobre categorias de mídia
+-- Criação da tabela para armazenar informações sobre categorias de mídia
 CREATE TABLE IF NOT EXISTS Categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL COMMENT 'Nome da categoria de mídia',
-    UNIQUE INDEX idx_name (name)
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
 );
+
+-- Adição de um índice à coluna "name" para melhorar a performance em consultas de busca
+CREATE INDEX IF NOT EXISTS idx_name ON Categories (name);
+
 
 
